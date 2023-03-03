@@ -1,10 +1,13 @@
 package main
+
 import (
 	"fmt"
-	"google.golang.org/grpc"
-	"net"
 	"log"
-	"server/helpers"
+	"net"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+
 	pb "server/charts"
 )
 
@@ -23,7 +26,7 @@ import (
 // 		time.Sleep(time.Second)
 // 	}
 // 	return nil
-// } 
+// }
 
 // func (s *server) GetBarChartData(req *pb.ChartRequest, stream pb.ChartDataService_GetBarChartDataServer) error {
 // 	for{
@@ -52,9 +55,10 @@ func main() {
 		log.Fatalf("Error while listening : %v", err)
 	}
 
-
 	s := grpc.NewServer()
 	pb.RegisterChartDataServiceServer(s, &helpers.Server{})
+	// Register reflection service on gRPC server.
+	reflection.Register(s)
 
 	log.Printf("Starting server in port :%d\n", port)
 
